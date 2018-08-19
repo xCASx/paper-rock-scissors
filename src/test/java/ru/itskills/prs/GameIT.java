@@ -15,7 +15,9 @@ public class GameIT {
         var game = injector.getInstance(Game.class);
         ScoreHolder scores = game.start();
 
-        assertEquals(scores.getScore("player"), 2, "Wrong score for human player");
-        assertEquals(scores.getScore("r2d2"), 1, "Wrong score for ai player");
+        int playerScore = scores.getScore("player").orElse(0);
+        int aiScore = scores.getScore("r2d2").orElse(0);
+        assertEquals(playerScore, 2, "Wrong score for human player");
+        assertEquals(aiScore, 1, "Wrong score for ai player");
     }
 }

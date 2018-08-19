@@ -27,8 +27,10 @@ public class GameTest {
 
         fixture.game.start();
 
-        assertEquals(fixture.game.getScores().getScore(fixture.playerA), 1);
-        assertEquals(fixture.game.getScores().getScore(fixture.playerB), numberOfRounds - 1);
+        int playerAScore = fixture.game.getScores().getScore(fixture.playerA).orElse(0);
+        int playerBScore = fixture.game.getScores().getScore(fixture.playerB).orElse(0);
+        assertEquals(playerAScore, 1);
+        assertEquals(playerBScore, numberOfRounds - 1);
         verify(fixture.strategy, times(numberOfRounds)).getWinner(
                 any(Player.class), any(Shape.class),
                 any(Player.class), any(Shape.class)
