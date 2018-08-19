@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 import ru.itskills.prs.game.Game;
 import ru.itskills.prs.game.ScoreHolder;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 public class GameIT {
 
