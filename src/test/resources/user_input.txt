@@ -1,0 +1,5 @@
+player
+3
+rock
+paper
+paper
