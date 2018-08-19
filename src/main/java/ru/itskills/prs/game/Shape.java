@@ -1,6 +1,5 @@
 package ru.itskills.prs.game;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +49,7 @@ public enum Shape {
         }
     };
 
-    public static final List<Shape> SHAPES = Arrays.asList(values());
+    public static final List<Shape> SHAPES = List.of(values());
 
     /**
      * Compares priorities of two shapes
