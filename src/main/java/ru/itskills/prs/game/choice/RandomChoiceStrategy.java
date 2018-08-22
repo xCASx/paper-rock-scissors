@@ -1,9 +1,10 @@
 package ru.itskills.prs.game.choice;
 
 import ru.itskills.prs.game.Shape;
-import ru.itskills.prs.ui.UserInterface;
 
 import java.util.Random;
+
+import static ru.itskills.prs.game.Shape.SHAPES;
 
 /**
  * The strategy utilizes provided {@link Random} to get pseudorandom choice of {@link Shape}
@@ -18,7 +19,7 @@ public class RandomChoiceStrategy implements ChoiceStrategy {
 
     @Override
     public Shape chooseAShape() {
-        int choice = random.nextInt(Shape.values().length);
-        return Shape.values()[choice];
+        int choice = random.nextInt(SHAPES.size());
+        return SHAPES.get(choice);
     }
 }

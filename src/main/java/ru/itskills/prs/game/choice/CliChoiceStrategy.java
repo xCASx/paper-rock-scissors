@@ -22,11 +22,11 @@ public class CliChoiceStrategy implements ChoiceStrategy {
     @Override
     public Shape chooseAShape() {
         ui.sendMessage(String.format("Please make your choice %s:", SHAPES));
-        var shape = Shape.find(ui.getUserChoice());
-        while (!shape.isPresent()) {
+        var shape = Shape.of(ui.getUserChoice());
+        while (shape.isUnknown()) {
             ui.sendMessage(String.format("Please chose a correct shape %s:", SHAPES));
-            shape = Shape.find(ui.getUserChoice());
+            shape = Shape.of(ui.getUserChoice());
         }
-        return shape.get();
+        return shape;
     }
 }

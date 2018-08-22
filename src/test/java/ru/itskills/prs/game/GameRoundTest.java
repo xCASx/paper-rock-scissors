@@ -1,13 +1,14 @@
 package ru.itskills.prs.game;
 
 import org.testng.annotations.Test;
+import ru.itskills.prs.game.player.Player;
 import ru.itskills.prs.ui.UserInterface;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 import static ru.itskills.prs.game.Shape.ROCK;
 
 public class GameRoundTest {
@@ -16,9 +17,9 @@ public class GameRoundTest {
     public void shouldSkipBadRound() {
         var fixture = new Fixture();
 
-        var play = fixture.gameRound.play(1);
+        var winner = fixture.gameRound.play(1);
 
-        assertFalse(play.isPresent());
+        assertTrue(winner.isUnknown());
     }
 
     private static final class Fixture {
@@ -29,7 +30,7 @@ public class GameRoundTest {
             doReturn(ROCK).when(mockPlayer).makeMove();
 
             var mockStrategy = mock(EvaluationStrategy.class);
-            doThrow(UnsupportedOperationException.class).when(mockStrategy)
+            doThrow(IllegalArgumentException.class).when(mockStrategy)
                     .getWinner(any(Player.class), any(Shape.class), any(Player.class), any(Shape.class));
 
             var mockUi = mock(UserInterface.class);

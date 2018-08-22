@@ -10,15 +10,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static ru.itskills.prs.game.Shape.ROCK;
+import static ru.itskills.prs.game.Shape.SHAPES;
 
 public class CliChoiceStrategyTest {
 
     @DataProvider(name = "expectedInputDataProvider")
     Object[][] expectedInputDataProvider() {
-        var shapes = Shape.values();
-        var data = new Object[shapes.length][];
-        for (int i = 0; i < shapes.length; i++) {
-            data[i] = new Object[] {shapes[i], shapes[i].toString()};
+        var data = new Object[SHAPES.size()][];
+        for (int i = 0; i < SHAPES.size(); i++) {
+            data[i] = new Object[] {SHAPES.get(i), SHAPES.get(i).toString()};
         }
         return data;
     }

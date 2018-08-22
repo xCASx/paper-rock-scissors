@@ -1,8 +1,8 @@
 package ru.itskills.prs.game;
 
+import ru.itskills.prs.game.player.Player;
+import ru.itskills.prs.game.player.UnknownPlayer;
 import ru.itskills.prs.ui.UserInterface;
-
-import java.util.Optional;
 
 /**
  * Represents a single game round
@@ -24,9 +24,9 @@ class GameRound {
      * Plays a single game round and defines the winner
      *
      * @param roundNumber current round number
-     * @return {@link Optional} wrapping the winner player or an empty {@link Optional} in case of draw
+     * @return the winner player or an {@link UnknownPlayer} in case of a draw round
      */
-    Optional<Player> play(final int roundNumber) {
+    Player play(final int roundNumber) {
         ui.sendMessage("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         ui.sendMessage("Round " + roundNumber);
         final var shapeA = playerA.makeMove();
@@ -34,20 +34,20 @@ class GameRound {
 
         try {
             return defineWinner(roundNumber, shapeA, shapeB);
-        } catch (UnsupportedOperationException e) {
+        } catch (IllegalArgumentException e) {
             // notify about an error and skip the bad round to not brake the whole game
             ui.sendMessage("Error during winner evaluation, the results of this round will be skipped:\n\t" + e.getMessage());
-            return Optional.empty();
+            return UnknownPlayer.INSTANCE;
         }
     }
 
-    private Optional<Player> defineWinner(int roundNumber, Shape shapeA, Shape shapeB) {
+    private Player defineWinner(int roundNumber, Shape shapeA, Shape shapeB) {
         final var winner = evaluationStrategy.getWinner(playerA, shapeA, playerB, shapeB);
-        if (winner.isPresent()) {
-            ui.sendMessage(String.format("%s chose %s, %s chose %s", playerA.getName(), shapeA, playerB.getName(), shapeB));
-            ui.sendMessage(String.format("The %d round's winner is %s", roundNumber, winner.get().getName()));
-        } else {
+        if (winner.isUnknown()) {
             ui.sendMessage("The round ended in a draw");
+        } else {
+            ui.sendMessage(String.format("%s chose %s, %s chose %s", playerA.getName(), shapeA, playerB.getName(), shapeB));
+            ui.sendMessage(String.format("The %d round's winner is %s", roundNumber, winner.getName()));
         }
         return winner;
     }

@@ -2,9 +2,9 @@ package ru.itskills.prs.game;
 
 import org.testng.annotations.Test;
 import ru.itskills.prs.game.choice.ChoiceStrategy;
+import ru.itskills.prs.game.player.GamePlayer;
+import ru.itskills.prs.game.player.Player;
 import ru.itskills.prs.ui.UserInterface;
-
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -27,8 +27,8 @@ public class GameTest {
 
         fixture.game.start();
 
-        int playerAScore = fixture.game.getScores().getScore(fixture.playerA).orElse(0);
-        int playerBScore = fixture.game.getScores().getScore(fixture.playerB).orElse(0);
+        int playerAScore = fixture.game.getScores().getScore(fixture.playerA);
+        int playerBScore = fixture.game.getScores().getScore(fixture.playerB);
         assertEquals(playerAScore, 1);
         assertEquals(playerBScore, numberOfRounds - 1);
         verify(fixture.strategy, times(numberOfRounds)).getWinner(
@@ -48,14 +48,14 @@ public class GameTest {
 
         Fixture givenRounds(int n) {
             doNothing().when(ui).sendMessage(anyString());
-            doReturn(Optional.of(n)).when(ui).getNumberOfRounds();
+            doReturn(n).when(ui).getNumberOfRounds();
             return this;
         }
 
         Player givenPlayer(String name, Shape... shapes) {
             var strategy = mock(ChoiceStrategy.class);
             doReturn(shapes[0], shapes[1]).when(strategy).chooseAShape();
-            return new Player(name, strategy);
+            return new GamePlayer(name, strategy);
         }
     }
 }

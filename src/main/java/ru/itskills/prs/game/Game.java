@@ -1,12 +1,12 @@
 package ru.itskills.prs.game;
 
+import ru.itskills.prs.game.player.Player;
 import ru.itskills.prs.ui.UserInterface;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import static ru.itskills.prs.util.NumberUtil.isUnknown;
 
 /**
  * The main class of the game.
@@ -43,7 +43,7 @@ public class Game {
         for (int roundNumber = 1; roundNumber <= numberOfRounds; roundNumber++) {
             var gameRound = new GameRound(ai, human, evaluationStrategy, ui);
             var roundWinner = gameRound.play(roundNumber);
-            roundWinner.ifPresent(scores::incrementScore);
+            scores.incrementScore(roundWinner);
         }
 
         publishResults(numberOfRounds);
@@ -54,28 +54,25 @@ public class Game {
         return scores;
     }
 
-    private Integer getNumberOfRounds() {
+    private int getNumberOfRounds() {
         ui.sendMessage("Please chose how many rounds you want to play: ");
-        var numberOfRounds = ui.getNumberOfRounds();
-        while (!numberOfRounds.isPresent()) {
+        int numberOfRounds = ui.getNumberOfRounds();
+        while (isUnknown(numberOfRounds)) {
             ui.sendMessage("Please input a valid integer value");
             numberOfRounds = ui.getNumberOfRounds();
         }
-        return numberOfRounds.get();
+        return numberOfRounds;
     }
 
     private void publishResults(final int numberOfRounds) {
         ui.sendMessage("################################################");
         ui.sendMessage(String.format("### The game is over after %d rounds ", numberOfRounds));
 
-        Optional<Integer> aiScoreOptional = scores.getScore(ai);
-        Optional<Integer> humanScoreOptional = scores.getScore(human);
-        if (!(aiScoreOptional.isPresent() && humanScoreOptional.isPresent())) {
+        int aiScore = scores.getScore(ai);
+        int humanScore = scores.getScore(human);
+        if (isUnknown(aiScore) || isUnknown(humanScore)) {
             throw new RuntimeException("Scores for players are not found");
         }
-
-        int aiScore = aiScoreOptional.get();
-        int humanScore = humanScoreOptional.get();
 
         if (aiScore == humanScore) {
             ui.sendMessage(String.format("### with a draw score %d:%d", aiScore, humanScore));

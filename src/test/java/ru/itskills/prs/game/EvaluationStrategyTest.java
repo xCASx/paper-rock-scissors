@@ -2,8 +2,7 @@ package ru.itskills.prs.game;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.util.Optional;
+import ru.itskills.prs.game.player.Player;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -13,6 +12,7 @@ import static org.testng.Assert.assertTrue;
 import static ru.itskills.prs.game.Shape.PAPER;
 import static ru.itskills.prs.game.Shape.ROCK;
 import static ru.itskills.prs.game.Shape.SCISSORS;
+import static ru.itskills.prs.game.Shape.SHAPES;
 
 public class EvaluationStrategyTest {
 
@@ -30,10 +30,9 @@ public class EvaluationStrategyTest {
 
     @DataProvider(name = "drawDataProvider")
     Object[][] drawDataProvider() {
-        var shapes = Shape.values();
-        var data = new Object[shapes.length][];
-        for (int i = 0; i < shapes.length; i++) {
-            data[i] = new Object[] {shapes[i], shapes[i]};
+        var data = new Object[SHAPES.size()][];
+        for (int i = 0; i < SHAPES.size(); i++) {
+            data[i] = new Object[] {SHAPES.get(i), SHAPES.get(i)};
         }
         return data;
     }
@@ -44,17 +43,17 @@ public class EvaluationStrategyTest {
 
         var winner = fixture.getWinner(shapeA, shapeB);
 
-        assertTrue(winner.isPresent(), "Winner should be present in non-draw game");
-        assertEquals(winner.get().getName(), expectedWinnerName, "Wrong winner");
+        assertFalse(winner.isUnknown(), "Winner should be present in non-draw round");
+        assertEquals(winner.getName(), expectedWinnerName, "Wrong winner");
     }
 
     @Test(dataProvider = "drawDataProvider")
-    public void shouldReturnEmptyOptionalForDrawCase(Shape shapeA, Shape shapeB) {
+    public void shouldReturnNoWinnerForDrawCase(Shape shapeA, Shape shapeB) {
         var fixture = new Fixture();
 
         var winner = fixture.getWinner(shapeA, shapeB);
 
-        assertFalse(winner.isPresent(), "There should not be winner in draw case");
+        assertTrue(winner.isUnknown(), "There should not be a winner in a draw round");
     }
 
     private static final class Fixture {
@@ -66,7 +65,7 @@ public class EvaluationStrategyTest {
             return mockPlayer;
         }
 
-        Optional<Player> getWinner(Shape shapeA, Shape shapeB) {
+        Player getWinner(Shape shapeA, Shape shapeB) {
             var firstPlayer = givenPlayer("firstPlayer");
             var secondPlayer = givenPlayer("secondPlayer");
             return strategy.getWinner(firstPlayer, shapeA, secondPlayer, shapeB);

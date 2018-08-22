@@ -1,10 +1,13 @@
 package ru.itskills.prs.ui;
 
+import ru.itskills.prs.util.NumberUtil;
+
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Scanner;
+
+import static ru.itskills.prs.util.NumberUtil.UNKNOWN;
 
 /**
  * Encapsulates the logic of communication with user interface making it pluggable and testable
@@ -49,13 +52,13 @@ public class UserInterface {
     /**
      * Requests a user's input for a desirable number of rounds
      *
-     * @return an {@link Optional} number of rounds
+     * @return number of rounds or {@link NumberUtil#UNKNOWN} in case of an error
      */
-    public Optional<Integer> getNumberOfRounds() {
+    public int getNumberOfRounds() {
         try {
-            return Optional.of(Integer.parseInt(in.nextLine()));
+            return Integer.parseInt(in.nextLine());
         } catch (NoSuchElementException | NumberFormatException e) {
-            return Optional.empty();
+            return UNKNOWN;
         }
     }
 }

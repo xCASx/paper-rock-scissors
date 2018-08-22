@@ -1,12 +1,17 @@
 package ru.itskills.prs.game;
 
-import java.util.Arrays;
+import ru.itskills.prs.game.player.Player;
+import ru.itskills.prs.util.NumberUtil;
+
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toMap;
+import static ru.itskills.prs.util.NumberUtil.UNKNOWN;
 
 /**
  * Encapsulates scoring results
@@ -15,9 +20,8 @@ public class ScoreHolder {
     private final Map<Player, AtomicInteger> scores;
 
     public ScoreHolder(Player... players) {
-        var baseMap = Arrays.stream(players)
-                .collect(Collectors.toMap(Function.identity(), v -> new AtomicInteger()));
-        this.scores = Collections.unmodifiableMap(baseMap);
+        this.scores = stream(players)
+                .collect(collectingAndThen(toMap(identity(), v -> new AtomicInteger()), Collections::unmodifiableMap));
     }
 
     /**
@@ -38,23 +42,24 @@ public class ScoreHolder {
      * Returns the score of particular player
      *
      * @param player whose score need to be returned
-     * @return optional player's score
+     * @return player's score or {@link NumberUtil#UNKNOWN} if player was not found
      */
-    public Optional<Integer> getScore(Player player) {
+    public int getScore(Player player) {
         AtomicInteger score = scores.get(player);
-        return score == null ? Optional.empty() : Optional.of(score.get());
+        return score == null ? UNKNOWN : score.get();
     }
 
     /**
      * Returns the score of particular player
      *
      * @param playerName whose score need to be returned
-     * @return optional player's score
+     * @return player's score or {@link NumberUtil#UNKNOWN} if player was not found
      */
-    public Optional<Integer> getScore(String playerName) {
+    public int getScore(String playerName) {
         return scores.keySet().stream()
                 .filter(p -> p.getName().equals(playerName))
                 .findAny()
-                .map(p -> scores.get(p).get());
+                .map(p -> scores.get(p).get())
+                .orElse(UNKNOWN);
     }
 }

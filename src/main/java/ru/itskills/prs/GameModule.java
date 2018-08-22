@@ -5,7 +5,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import ru.itskills.prs.game.Player;
+import ru.itskills.prs.game.player.GamePlayer;
+import ru.itskills.prs.game.player.Player;
 import ru.itskills.prs.game.choice.ChoiceStrategy;
 import ru.itskills.prs.game.choice.CliChoiceStrategy;
 import ru.itskills.prs.game.choice.RandomChoiceStrategy;
@@ -36,7 +37,7 @@ public class GameModule extends AbstractModule {
     @Singleton
     @Named("AI")
     public Player newArtificialPlayer(@Named("RandomChoice") ChoiceStrategy strategy) {
-        return new Player("r2d2", strategy);
+        return new GamePlayer("r2d2", strategy);
     }
 
     @Provides
@@ -45,6 +46,6 @@ public class GameModule extends AbstractModule {
     public Player newHumanPlayer(UserInterface ui, @Named("CliChoice") ChoiceStrategy strategy) {
         ui.sendMessage("Please input your name to start the game: ");
         var userName = ui.getUserName();
-        return new Player(userName, strategy);
+        return new GamePlayer(userName, strategy);
     }
 }

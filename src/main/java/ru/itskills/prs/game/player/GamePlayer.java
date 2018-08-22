@@ -1,35 +1,33 @@
-package ru.itskills.prs.game;
+package ru.itskills.prs.game.player;
 
+import ru.itskills.prs.game.Shape;
 import ru.itskills.prs.game.choice.ChoiceStrategy;
 
 /**
  * Represents a game player
  */
-public class Player  {
+public class GamePlayer implements Player {
 
     private final String name;
     private final ChoiceStrategy choiceStrategy;
 
-    public Player(String name, ChoiceStrategy choiceStrategy) {
+    public GamePlayer(String name, ChoiceStrategy choiceStrategy) {
         this.name = name;
         this.choiceStrategy = choiceStrategy;
     }
 
-    /**
-     * Forces the player to make a move
-     *
-     * @return chosen shape
-     */
+    @Override
     public Shape makeMove() {
         return choiceStrategy.chooseAShape();
     }
 
-    /**
-     * Returns player's name
-     *
-     * @return player's name
-     */
+    @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean isUnknown() {
+        return false;
     }
 }

@@ -3,8 +3,6 @@ package ru.itskills.prs.game;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-
 import static org.testng.Assert.assertEquals;
 import static ru.itskills.prs.game.Shape.PAPER;
 import static ru.itskills.prs.game.Shape.ROCK;
@@ -25,15 +23,6 @@ public class ShapeTest {
                 {PAPER,     ROCK,       WINS},
                 {ROCK,      SCISSORS,   WINS},
         };
-    }
-
-    @Test
-    public void shouldFindAllShapes() {
-        long count = Arrays.stream(Shape.values())
-                .filter(shape -> Shape.find(shape.name()).isPresent())
-                .count();
-
-        assertEquals(count, Shape.values().length, "All shapes should be found");
     }
 
     @Test(dataProvider = "rulesProvider")

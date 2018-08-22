@@ -1,9 +1,11 @@
 package ru.itskills.prs.game;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 import static ru.itskills.prs.game.Shape.Result.DRAW;
 import static ru.itskills.prs.game.Shape.Result.LOSES;
 import static ru.itskills.prs.game.Shape.Result.WINS;
@@ -19,9 +21,13 @@ public enum Shape {
                 case PAPER:     return DRAW;
                 case ROCK:      return WINS;
                 case SCISSORS:  return LOSES;
-                default:
-                    throw new UnsupportedOperationException("Unexpected shape " + shape);
+                default:        return Result.UNKNOWN;
             }
+        }
+
+        @Override
+        public boolean isUnknown() {
+            return false;
         }
     },
     ROCK {
@@ -31,9 +37,13 @@ public enum Shape {
                 case PAPER:     return LOSES;
                 case ROCK:      return DRAW;
                 case SCISSORS:  return WINS;
-                default:
-                    throw new UnsupportedOperationException("Unexpected shape " + shape);
+                default:        return Result.UNKNOWN;
             }
+        }
+
+        @Override
+        public boolean isUnknown() {
+            return false;
         }
     },
     SCISSORS {
@@ -43,19 +53,50 @@ public enum Shape {
                 case PAPER:     return WINS;
                 case ROCK:      return LOSES;
                 case SCISSORS:  return DRAW;
-                default:
-                    throw new UnsupportedOperationException("Unexpected shape " + shape);
+                default:        return Result.UNKNOWN;
             }
+        }
+
+        @Override
+        public boolean isUnknown() {
+            return false;
+        }
+    },
+    /**
+     * Null object for Shape
+     */
+    UNKNOWN {
+        @Override
+        Result beats(Shape shape) {
+            return Result.UNKNOWN;
+        }
+
+        @Override
+        public boolean isUnknown() {
+            return true;
         }
     };
 
-    public static final List<Shape> SHAPES = List.of(values());
+    /**
+     * Contains all the shapes excluding null object
+     */
+    public static final List<Shape> SHAPES =
+            stream(values())
+                    .filter(shape -> !shape.isUnknown())
+                    .collect(collectingAndThen(toList(), Collections::unmodifiableList));
+
+    /**
+     * Is the shape a null object
+     * @return {@code true} for null object shape and {@code false} in an opposite case
+     */
+    public abstract boolean isUnknown();
 
     /**
      * Compares priorities of two shapes
      *
      * @param shape the shape with which to compare
      * @return comparison result
+     * @throws IllegalArgumentException in case of unexpected {@link Shape}
      */
     abstract Result beats(Shape shape);
 
@@ -63,12 +104,13 @@ public enum Shape {
      * Looks through all available shapes to find the one with a given name
      *
      * @param name the name of the sought-for shape
-     * @return an {@link Optional} result of search
+     * @return shape of a given name or a {@link Shape#UNKNOWN} object if shape is not found
      */
-    public static Optional<Shape> find(String name) {
-        return stream(values())
+    public static Shape of(String name) {
+        return SHAPES.stream()
                 .filter(shape -> shape.toString().equals(name))
-                .findAny();
+                .findAny()
+                .orElse(UNKNOWN);
     }
 
     /**
@@ -77,6 +119,11 @@ public enum Shape {
     enum Result {
         WINS,
         LOSES,
-        DRAW
+        DRAW,
+
+        /**
+         * Null object for Result
+         */
+        UNKNOWN
     }
 }
